@@ -88,22 +88,14 @@ class Resource {
       return src;
     }
 
-    const promise = new Promise<string>((resolve, reject) => {
+    const promise = new Promise<string>(async (resolve) => {
       const img = new Image();
-
-      img.onload = () => {
-        this._cache[src] = true;
-        resolve(src);
-      };
-
-      img.onerror = () => {
-        this._cache[src] = new Error(
-          `An error occurred loading the image: "${src}"`
-        );
-        reject();
-      };
-
       img.src = src;
+
+      await image.decode();
+
+      this._cache[src] = true;
+      resolve(src);
     });
 
     this._cache[src] = promise;
